@@ -4,6 +4,20 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
+export interface Contract {
+    contractNumber: string;
+    startDate: string;
+    endDate: string;
+    agentId: string;
+    investorId: string;
+    productCode: string;
+    contractPeriod: number;
+    commissionStart: string;
+    commissionEnd: string;
+    amount: number;
+    status: string;
+}
+
 export interface FamilyMember {
     id: number;
     type: string;
@@ -17,6 +31,7 @@ export interface FamilyMember {
     agentId: string | null;
     createdAt: string;
     updatedAt: string;
+    contracts: Contract[];
     children: FamilyMember[];
     // UI state
     collapsed?: boolean;
@@ -49,6 +64,10 @@ export class FamilyTreeComponent implements OnInit {
     familyTree = signal<FamilyMember[]>([]);
     searchQuery = signal('');
     expandAll = signal(false);
+
+    // Side panel state
+    selectedMember = signal<FamilyMember | null>(null);
+    panelOpen = signal(false);
 
     filteredTree = computed(() => {
         const q = this.searchQuery().toLowerCase().trim();
@@ -119,6 +138,18 @@ export class FamilyTreeComponent implements OnInit {
         });
     }
 
+    // ── Side panel ──────────────────────────────────
+    openPanel(member: FamilyMember): void {
+        this.selectedMember.set(member);
+        this.panelOpen.set(true);
+    }
+
+    closePanel(): void {
+        this.panelOpen.set(false);
+        setTimeout(() => this.selectedMember.set(null), 300);
+    }
+
+    // ── Type helpers ─────────────────────────────────
     getTypeKey(type: string): string {
         const map: Record<string, string> = {
             'Agent Type 1': 'type1',
@@ -138,6 +169,31 @@ export class FamilyTreeComponent implements OnInit {
         return status ? 'ผ่านแล้ว' : 'ยังไม่ผ่าน';
     }
 
+    // ── Contract helpers ──────────────────────────────
+    getTotalAmount(contracts: Contract[]): number {
+        return contracts.reduce((sum, c) => sum + c.amount, 0);
+    }
+
+    formatAmount(amount: number): string {
+        if (amount >= 1_000_000) {
+            const m = amount / 1_000_000;
+            return m % 1 === 0 ? `${m}ล้าน` : `${m.toFixed(2).replace(/\.?0+$/, '')}ล้าน`;
+        }
+        if (amount >= 100_000) {
+            const h = amount / 100_000;
+            return h % 1 === 0 ? `${h}แสน` : `${h.toFixed(1)}แสน`;
+        }
+        return amount.toLocaleString('th-TH');
+    }
+
+    formatAmountFull(amount: number): string {
+        return '฿' + amount.toLocaleString('th-TH');
+    }
+
+    getContractStatusKey(status: string): string {
+        return status === 'active' ? 'active' : 'inactive';
+    }
+
     countDescendants(node: FamilyMember): number {
         let count = node.children.length;
         for (const child of node.children) {
@@ -149,5 +205,8 @@ export class FamilyTreeComponent implements OnInit {
     trackById(_: number, node: FamilyMember): number {
         return node.id;
     }
-}
 
+    trackByContract(_: number, c: Contract): string {
+        return c.contractNumber;
+    }
+}

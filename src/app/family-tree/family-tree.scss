@@ -325,7 +325,7 @@ $line-w: 2px;
     background: $bg-card;
     border-radius: $border-radius;
     border: 2px solid $color-default;
-    width: 180px;
+    width: 200px;
     padding: 12px 14px 10px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
     transition: box-shadow 0.2s, transform 0.2s;
@@ -440,6 +440,73 @@ $line-w: 2px;
         color: #64748b;
     }
 
+    // ── Divider ──
+    &__divider {
+        height: 1px;
+        background: #f1f5f9;
+        margin: 8px 0 6px;
+    }
+
+    // ── Contract summary button ──
+    &__contracts-btn {
+        width: 100%;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 7px 9px;
+        cursor: pointer;
+        text-align: left;
+        transition: background 0.15s, border-color 0.15s;
+        font-family: inherit;
+
+        &:hover {
+            background: #eff6ff;
+            border-color: rgba($color-type1, 0.4);
+        }
+    }
+
+    &__contracts-stats {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 3px;
+    }
+
+    &__contracts-count {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: #374151;
+
+        svg {
+            stroke: #64748b;
+            flex-shrink: 0;
+        }
+    }
+
+    &__contracts-amount {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: $color-type1;
+        font-family: 'SFMono-Regular', 'Consolas', monospace;
+    }
+
+    &__contracts-view {
+        display: block;
+        font-size: 0.63rem;
+        color: #94a3b8;
+    }
+
+    // ── No contracts ──
+    &__no-contracts {
+        font-size: 0.68rem;
+        color: #94a3b8;
+        text-align: center;
+        padding: 4px 0;
+    }
+
     // ── Expand toggle ──
     &__toggle {
         display: flex;
@@ -468,6 +535,256 @@ $line-w: 2px;
     }
 }
 
+// ─── Side panel backdrop ─────────────────────────────────────────────────────
+.ft-panel-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.35);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+
+    &--open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+// ─── Side panel ───────────────────────────────────────────────────────────────
+.ft-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 420px;
+    max-width: 100vw;
+    background: #fff;
+    z-index: 201;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -4px 0 32px rgba(0, 0, 0, 0.12);
+
+    &--open {
+        transform: translateX(0);
+    }
+
+    // Header
+    &__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 20px 20px 16px;
+        border-bottom: 1px solid #f1f5f9;
+        flex-shrink: 0;
+
+        &--type1 {
+            border-top: 4px solid $color-type1;
+        }
+
+        &--type2 {
+            border-top: 4px solid $color-type2;
+        }
+
+        &--ga {
+            border-top: 4px solid $color-ga;
+        }
+    }
+
+    &__header-info {
+        flex: 1;
+    }
+
+    &__header-type {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        color: #94a3b8;
+        margin-bottom: 4px;
+    }
+
+    &__header-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 2px;
+    }
+
+    &__header-id {
+        font-size: 0.78rem;
+        color: #64748b;
+        font-family: 'SFMono-Regular', 'Consolas', monospace;
+    }
+
+    &__close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #94a3b8;
+        padding: 4px;
+        border-radius: 6px;
+        transition: background 0.15s, color 0.15s;
+        margin-left: 8px;
+        flex-shrink: 0;
+
+        &:hover {
+            background: #f1f5f9;
+            color: #374151;
+        }
+    }
+
+    // Summary strip
+    &__summary {
+        display: flex;
+        gap: 0;
+        border-bottom: 1px solid #f1f5f9;
+        flex-shrink: 0;
+    }
+
+    &__summary-item {
+        flex: 1;
+        padding: 12px 20px;
+        border-right: 1px solid #f1f5f9;
+
+        &:last-child {
+            border-right: none;
+        }
+    }
+
+    &__summary-label {
+        display: block;
+        font-size: 0.68rem;
+        color: #94a3b8;
+        margin-bottom: 3px;
+    }
+
+    &__summary-value {
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+
+        &--amount {
+            color: $color-type1;
+            font-family: 'SFMono-Regular', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+    }
+
+    // ── Flat contract list ──────────────────────────
+    &__list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0;
+        // Custom scrollbar
+        scrollbar-width: thin;
+        scrollbar-color: #e2e8f0 transparent;
+
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 99px;
+        }
+    }
+
+    &__empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.85rem;
+        padding: 48px 0;
+
+        p {
+            margin: 0;
+        }
+    }
+
+    // Each flat contract row
+    &__item {
+        border-bottom: 1px solid #f1f5f9;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    // Top row: contract number + badge
+    &__item-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px 8px;
+    }
+
+    &__item-number {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #1e293b;
+        font-family: 'SFMono-Regular', 'Consolas', monospace;
+        letter-spacing: 0.02em;
+    }
+
+    &__item-badge {
+        font-size: 0.63rem;
+        font-weight: 600;
+        padding: 2px 9px;
+        border-radius: 20px;
+        flex-shrink: 0;
+
+        &--active {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        &--inactive {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+    }
+
+    // Detail grid below the number row
+    &__item-details {
+        padding: 0 20px 12px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 3px 12px;
+    }
+
+    &__item-kv {
+        display: contents;
+    }
+
+    &__item-key {
+        font-size: 0.68rem;
+        color: #94a3b8;
+        align-self: center;
+        white-space: nowrap;
+    }
+
+    &__item-val {
+        font-size: 0.72rem;
+        color: #374151;
+        font-weight: 500;
+        text-align: right;
+        align-self: center;
+        word-break: break-word;
+
+        &--amount {
+            color: $color-type1;
+            font-weight: 700;
+            font-family: 'SFMono-Regular', 'Consolas', monospace;
+        }
+    }
+}
+
 // ─── Responsive ───────────────────────────────────────────────────────────────
 @media (max-width: 640px) {
     .ft-canvas {
@@ -484,7 +801,11 @@ $line-w: 2px;
     }
 
     .ft-card {
-        width: 150px;
+        width: 170px;
+    }
+
+    .ft-panel {
+        width: 100vw;
     }
 
     .ft-search__input {

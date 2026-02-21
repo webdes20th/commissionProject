@@ -95,7 +95,7 @@
       </div>
 
       <!-- Name -->
-      <div class="ft-card__name">{{ node.firstName }} {{ node.lastName }}</div>
+      <div class="ft-card__name">{{ node.title }} {{ node.firstName }} {{ node.lastName }}</div>
 
       <!-- Agent ID -->
       <div class="ft-card__agent-id">
@@ -107,6 +107,29 @@
         <span class="ft-card__status-dot" [class]="'ft-card__status-dot--' + getStatusKey(node.checkedStatus)"></span>
         <span class="ft-card__status-label">{{ getStatusLabel(node.checkedStatus) }}</span>
       </div>
+
+      <!-- Contract summary -->
+      <div class="ft-card__divider"></div>
+      @if (node.contracts && node.contracts.length > 0) {
+      <button class="ft-card__contracts-btn" (click)="openPanel(node)">
+        <div class="ft-card__contracts-stats">
+          <span class="ft-card__contracts-count">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg>
+            {{ node.contracts.length }} สัญญา
+          </span>
+          <span class="ft-card__contracts-amount">
+            ฿{{ formatAmount(getTotalAmount(node.contracts)) }}
+          </span>
+        </div>
+        <span class="ft-card__contracts-view">ดูรายละเอียด →</span>
+      </button>
+      } @else {
+      <div class="ft-card__no-contracts">ไม่มีสัญญา</div>
+      }
 
       <!-- Expand toggle -->
       @if (node.children.length > 0) {
@@ -137,3 +160,95 @@
     }
   </div>
 </ng-template>
+
+<!-- ── Contract Detail Side Panel ────────────────── -->
+<div class="ft-panel-backdrop" [class.ft-panel-backdrop--open]="panelOpen()" (click)="closePanel()"></div>
+<aside class="ft-panel" [class.ft-panel--open]="panelOpen()">
+  @if (selectedMember()) {
+
+  <!-- Header -->
+  <div class="ft-panel__header" [class]="'ft-panel__header--' + getTypeKey(selectedMember()!.type)">
+    <div class="ft-panel__header-info">
+      <div class="ft-panel__header-type">{{ selectedMember()!.type | uppercase }}</div>
+      <div class="ft-panel__header-name">{{ selectedMember()!.title }} {{ selectedMember()!.firstName }} {{
+        selectedMember()!.lastName }}</div>
+      <div class="ft-panel__header-id">{{ selectedMember()!.agentId ?? '—' }}</div>
+    </div>
+    <button class="ft-panel__close" (click)="closePanel()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Summary strip -->
+  <div class="ft-panel__summary">
+    <div class="ft-panel__summary-item">
+      <span class="ft-panel__summary-label">จำนวนสัญญา</span>
+      <span class="ft-panel__summary-value">{{ selectedMember()!.contracts.length }}</span>
+    </div>
+    <div class="ft-panel__summary-item">
+      <span class="ft-panel__summary-label">มูลค่ารวม</span>
+      <span class="ft-panel__summary-value ft-panel__summary-value--amount">
+        {{ formatAmountFull(getTotalAmount(selectedMember()!.contracts)) }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Contract flat list -->
+  <div class="ft-panel__list">
+    @if (selectedMember()!.contracts.length === 0) {
+    <div class="ft-panel__empty">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:#d1d5db">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+      </svg>
+      <p>ไม่มีข้อมูลสัญญา</p>
+    </div>
+    }
+
+    @for (c of selectedMember()!.contracts; track c.contractNumber; let idx = $index) {
+    <div class="ft-panel__item">
+      <!-- Contract row: number + status -->
+      <div class="ft-panel__item-row">
+        <span class="ft-panel__item-number">{{ c.contractNumber }}</span>
+        <span class="ft-panel__item-badge" [class]="'ft-panel__item-badge--' + getContractStatusKey(c.status)">
+          {{ c.status === 'active' ? 'Active' : c.status }}
+        </span>
+      </div>
+
+      <!-- Detail grid -->
+      <div class="ft-panel__item-details">
+        <div class="ft-panel__item-kv">
+          <span class="ft-panel__item-key">ผลิตภัณฑ์</span>
+          <span class="ft-panel__item-val">{{ c.productCode }}</span>
+        </div>
+        <div class="ft-panel__item-kv">
+          <span class="ft-panel__item-key">นักลงทุน</span>
+          <span class="ft-panel__item-val">{{ c.investorId }}</span>
+        </div>
+        <div class="ft-panel__item-kv">
+          <span class="ft-panel__item-key">มูลค่า</span>
+          <span class="ft-panel__item-val ft-panel__item-val--amount">{{ formatAmountFull(c.amount) }}</span>
+        </div>
+        <div class="ft-panel__item-kv">
+          <span class="ft-panel__item-key">ระยะเวลา</span>
+          <span class="ft-panel__item-val">{{ c.contractPeriod }} เดือน</span>
+        </div>
+        <div class="ft-panel__item-kv">
+          <span class="ft-panel__item-key">เริ่มต้น</span>
+          <span class="ft-panel__item-val">{{ c.startDate }}</span>
+        </div>
+        <div class="ft-panel__item-kv">
+          <span class="ft-panel__item-key">สิ้นสุด</span>
+          <span class="ft-panel__item-val">{{ c.endDate }}</span>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</aside>
