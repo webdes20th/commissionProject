@@ -507,6 +507,43 @@ $line-w: 2px;
         padding: 4px 0;
     }
 
+    // ── Team summary value ──
+    &__team-value {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 7px;
+        padding: 6px 9px;
+        background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 100%);
+        border: 1px solid #c7d2fe;
+        border-radius: 8px;
+        gap: 6px;
+    }
+
+    &__team-value-label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.63rem;
+        font-weight: 600;
+        color: #6366f1;
+        white-space: nowrap;
+        letter-spacing: 0.03em;
+
+        svg {
+            stroke: #6366f1;
+            flex-shrink: 0;
+        }
+    }
+
+    &__team-value-amount {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #4f46e5;
+        font-family: 'SFMono-Regular', 'Consolas', monospace;
+        text-align: right;
+    }
+
     // ── Expand toggle ──
     &__toggle {
         display: flex;

@@ -32,6 +32,7 @@ export interface FamilyMember {
     createdAt: string;
     updatedAt: string;
     contracts: Contract[];
+    summaryTeamValue: number;
     children: FamilyMember[];
     // UI state
     collapsed?: boolean;
