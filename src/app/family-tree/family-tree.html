@@ -1,0 +1,139 @@
+<section class="ft-page">
+
+  <!-- ── Top Legend ─────────────────────────── -->
+  <div class="ft-legend-bar">
+    <div class="ft-legend-bar__inner">
+      <span class="legend-item">
+        <span class="legend-dot legend-dot--ga"></span>GA Type
+      </span>
+      <span class="legend-item">
+        <span class="legend-dot legend-dot--type1"></span>Agent Type 1
+      </span>
+      <span class="legend-item">
+        <span class="legend-dot legend-dot--type2"></span>Agent Type 2
+      </span>
+    </div>
+
+    <div class="ft-legend-bar__actions">
+      <div class="ft-search">
+        <svg class="ft-search__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <input class="ft-search__input" type="text" placeholder="ค้นหาชื่อ, รหัส..." [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)" />
+        @if (searchQuery()) {
+        <button class="ft-search__clear" (click)="searchQuery.set('')">✕</button>
+        }
+      </div>
+      <button class="ft-top-btn" (click)="fetchFamilyTree()" title="รีเฟรช">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+          <path d="M21 3v5h-5" />
+          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+          <path d="M8 16H3v5" />
+        </svg>
+      </button>
+      <button class="ft-top-btn ft-top-btn--primary" (click)="toggleExpandAll()">
+        {{ expandAll() ? 'ย่อทั้งหมด' : 'ขยายทั้งหมด' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Stats bar ──────────────────────────── -->
+  @if (!loading() && !error()) {
+  <div class="ft-stats-bar">
+    <span class="ft-stats-bar__item">
+      <b>{{ totalMembers() }}</b> สมาชิกทั้งหมด
+    </span>
+  </div>
+  }
+
+  <!-- ── Canvas ─────────────────────────────── -->
+  <div class="ft-canvas">
+    @if (loading()) {
+    <div class="ft-state">
+      <div class="ft-spinner"></div>
+      <p>กำลังโหลดข้อมูล...</p>
+    </div>
+    } @else if (error()) {
+    <div class="ft-state">
+      <p class="ft-state--error">{{ error() }}</p>
+      <button class="ft-top-btn ft-top-btn--primary" (click)="fetchFamilyTree()">ลองใหม่</button>
+    </div>
+    } @else if (filteredTree().length === 0) {
+    <div class="ft-state">
+      <p>ไม่พบข้อมูลที่ค้นหา</p>
+      <button class="ft-top-btn" (click)="searchQuery.set('')">ล้างการค้นหา</button>
+    </div>
+    } @else {
+    <div class="ft-org">
+      @for (root of filteredTree(); track root.id) {
+      <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: root, depth: 0 }" />
+      }
+    </div>
+    }
+  </div>
+</section>
+
+<!-- ── Recursive Node Template ────────────────── -->
+<ng-template #nodeTemplate let-node let-depth="depth">
+  <div class="ft-org-node" [class.ft-org-node--root]="depth === 0">
+
+    <!-- Card -->
+    <div class="ft-card" [class]="'ft-card--' + getTypeKey(node.type)">
+      <!-- Type label row -->
+      <div class="ft-card__type-row" [class]="'ft-card__type-row--' + getTypeKey(node.type)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        <span>{{ node.type | uppercase }}</span>
+      </div>
+
+      <!-- Name -->
+      <div class="ft-card__name">{{ node.firstName }} {{ node.lastName }}</div>
+
+      <!-- Agent ID -->
+      <div class="ft-card__agent-id">
+        @if (node.agentId) { {{ node.agentId }} } @else { — }
+      </div>
+
+      <!-- Status dot -->
+      <div class="ft-card__status-row">
+        <span class="ft-card__status-dot" [class]="'ft-card__status-dot--' + getStatusKey(node.checkedStatus)"></span>
+        <span class="ft-card__status-label">{{ getStatusLabel(node.checkedStatus) }}</span>
+      </div>
+
+      <!-- Expand toggle -->
+      @if (node.children.length > 0) {
+      <button class="ft-card__toggle" [class.ft-card__toggle--open]="!node.collapsed" (click)="toggleNode(node)"
+        [attr.aria-label]="node.collapsed ? 'ขยาย' : 'ย่อ'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+      }
+    </div>
+
+    <!-- Children branch -->
+    @if (node.children.length > 0 && !node.collapsed) {
+    <div class="ft-org-children">
+      <div class="ft-connector ft-connector--down"></div>
+      <div class="ft-connector-row">
+        @for (child of node.children; track child.id; let first = $first; let last = $last) {
+        <div class="ft-connector-col" [class.ft-connector-col--first]="first" [class.ft-connector-col--last]="last"
+          [class.ft-connector-col--single]="node.children.length === 1">
+          <div class="ft-connector ft-connector--up"></div>
+          <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: child, depth: depth + 1 }" />
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+</ng-template>

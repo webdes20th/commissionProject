@@ -1,0 +1,493 @@
+// ─── Design tokens ──────────────────────────────────────────────────────────
+$color-type1: #2563eb; // blue  — Agent Type 1
+$color-type2: #059669; // green — Agent Type 2
+$color-ga: #7c3aed; // purple — GA Type
+$color-default: #64748b;
+
+$bg-page: #f0f2f7;
+$bg-card: #ffffff;
+$border-radius: 12px;
+$connector: #adb5bd;
+$line-w: 2px;
+
+// ─── Page ───────────────────────────────────────────────────────────────────
+.ft-page {
+    min-height: 100vh;
+    background-color: $bg-page;
+    background-image: radial-gradient(circle, #c5cae9 1px, transparent 1px);
+    background-size: 24px 24px;
+    font-family: 'Sarabun', 'Inter', sans-serif;
+    color: #1e293b;
+}
+
+// ─── Legend / Toolbar bar ────────────────────────────────────────────────────
+.ft-legend-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 14px 32px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    &__inner {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex: 1;
+        justify-content: center;
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+
+    &--ga {
+        background: $color-ga;
+    }
+
+    &--type1 {
+        background: $color-type1;
+    }
+
+    &--type2 {
+        background: $color-type2;
+    }
+}
+
+// ─── Stats bar ───────────────────────────────────────────────────────────────
+.ft-stats-bar {
+    text-align: center;
+    padding: 6px;
+    font-size: 0.78rem;
+    color: #64748b;
+
+    b {
+        font-weight: 700;
+        color: #374151;
+    }
+}
+
+// ─── Search ──────────────────────────────────────────────────────────────────
+.ft-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    &__icon {
+        position: absolute;
+        left: 10px;
+        color: #94a3b8;
+        pointer-events: none;
+    }
+
+    &__input {
+        padding: 7px 32px 7px 30px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        font-size: 0.8rem;
+        font-family: inherit;
+        color: #1e293b;
+        outline: none;
+        width: 200px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &::placeholder {
+            color: #94a3b8;
+        }
+
+        &:focus {
+            border-color: $color-type1;
+            box-shadow: 0 0 0 3px rgba($color-type1, 0.12);
+        }
+    }
+
+    &__clear {
+        position: absolute;
+        right: 8px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #94a3b8;
+        font-size: 0.75rem;
+        padding: 2px;
+
+        &:hover {
+            color: #374151;
+        }
+    }
+}
+
+// ─── Buttons ──────────────────────────────────────────────────────────────────
+.ft-top-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #374151;
+    transition: all 0.18s;
+    white-space: nowrap;
+
+    &:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    &--primary {
+        background: $color-type1;
+        color: #fff;
+        border-color: $color-type1;
+
+        &:hover {
+            background: darken($color-type1, 6%);
+        }
+    }
+}
+
+// ─── Canvas ───────────────────────────────────────────────────────────────────
+.ft-canvas {
+    padding: 40px 32px 80px;
+    min-height: calc(100vh - 80px);
+    overflow-x: auto;
+    overflow-y: auto;
+    // Allow the inner tree to report its full intrinsic width so
+    // overflow-x: auto can scroll in BOTH directions (not just right).
+    // Without this the left half of a wide tree is clipped and unreachable.
+    text-align: center;
+}
+
+.ft-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-height: 50vh;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #64748b;
+
+    &--error {
+        color: #dc2626;
+    }
+}
+
+.ft-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba($color-type1, 0.15);
+    border-top-color: $color-type1;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// ─── Org tree layout ──────────────────────────────────────────────────────────
+.ft-org {
+    // Use inline-flex so the element's scroll width equals its content width.
+    // With display:flex + align-items:center the browser centres in the
+    // viewport but doesn't mark the left overflow as scrollable — cards on
+    // the left get permanently clipped. inline-flex fixes that.
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    // Ensures the canvas scroll container sees at least the full tree width.
+    min-width: max-content;
+    padding: 0 40px; // extra breathing room on both sides when scrolling
+}
+
+// A single node + its subtree
+.ft-org-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+// Children container
+.ft-org-children {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+// The horizontal row of child columns
+.ft-connector-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    position: relative;
+
+    // The horizontal bar across all siblings
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        right: 50%;
+        height: $line-w;
+        background: $connector;
+    }
+}
+
+// Dynamically extend the horizontal bar
+// We use the first and last child pseudo-elements to extend
+.ft-connector-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px;
+    position: relative;
+
+    // Draw horizontal bar only for multi-child rows
+    &:not(.ft-connector-col--single) {
+
+        // Each col's top has the horizontal line
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            height: $line-w;
+            background: $connector;
+            left: 0;
+            right: 0;
+        }
+
+        // But first column only draws right half
+        &.ft-connector-col--first::before {
+            left: 50%;
+            right: 0;
+        }
+
+        // And last column only draws left half
+        &.ft-connector-col--last::before {
+            left: 0;
+            right: 50%;
+        }
+    }
+}
+
+// Vertical connector — going DOWN from card
+.ft-connector--down {
+    width: $line-w;
+    height: 28px;
+    background: $connector;
+    flex-shrink: 0;
+}
+
+// Vertical connector — going UP into card (inside each child column)
+.ft-connector--up {
+    width: $line-w;
+    height: 28px;
+    background: $connector;
+    flex-shrink: 0;
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+.ft-card {
+    background: $bg-card;
+    border-radius: $border-radius;
+    border: 2px solid $color-default;
+    width: 180px;
+    padding: 12px 14px 10px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: default;
+    position: relative;
+
+    &:hover {
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.13);
+        transform: translateY(-2px);
+    }
+
+    // Color variants
+    &--type1 {
+        border-color: $color-type1;
+    }
+
+    &--type2 {
+        border-color: $color-type2;
+    }
+
+    &--ga {
+        border-color: $color-ga;
+    }
+
+    // ── Type label row ──
+    &__type-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.64rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: $color-default;
+        margin-bottom: 6px;
+
+        svg {
+            flex-shrink: 0;
+        }
+
+        &--type1 {
+            color: $color-type1;
+
+            svg {
+                stroke: $color-type1;
+            }
+        }
+
+        &--type2 {
+            color: $color-type2;
+
+            svg {
+                stroke: $color-type2;
+            }
+        }
+
+        &--ga {
+            color: $color-ga;
+
+            svg {
+                stroke: $color-ga;
+            }
+        }
+    }
+
+    // ── Name ──
+    &__name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #1e293b;
+        line-height: 1.35;
+        margin-bottom: 4px;
+        word-break: break-word;
+    }
+
+    // ── Agent ID ──
+    &__agent-id {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-bottom: 6px;
+        font-family: 'SFMono-Regular', 'Consolas', monospace;
+    }
+
+    // ── Status ──
+    &__status-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 2px;
+    }
+
+    &__status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+
+        &--active {
+            background: #22c55e;
+        }
+
+        &--inactive {
+            background: #ef4444;
+        }
+
+        &--pending {
+            background: #d1d5db;
+        }
+    }
+
+    &__status-label {
+        font-size: 0.7rem;
+        color: #64748b;
+    }
+
+    // ── Expand toggle ──
+    &__toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin-top: 8px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: #94a3b8;
+        padding: 0;
+        transition: color 0.15s;
+
+        svg {
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        &:hover {
+            color: #374151;
+        }
+
+        &--open svg {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 640px) {
+    .ft-canvas {
+        padding: 24px 8px 60px;
+    }
+
+    .ft-legend-bar {
+        padding: 12px 16px;
+        gap: 12px;
+    }
+
+    .ft-connector-col {
+        padding: 0 8px;
+    }
+
+    .ft-card {
+        width: 150px;
+    }
+
+    .ft-search__input {
+        width: 140px;
+    }
+}
