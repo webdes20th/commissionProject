@@ -33,6 +33,8 @@ export interface FamilyMember {
     updatedAt: string;
     contracts: Contract[];
     summaryTeamValue: number;
+    rateTeamValue: number;
+    selfCommission: number;
     children: FamilyMember[];
     // UI state
     collapsed?: boolean;
@@ -189,6 +191,11 @@ export class FamilyTreeComponent implements OnInit {
 
     formatAmountFull(amount: number): string {
         return '฿' + amount.toLocaleString('th-TH');
+    }
+
+    formatRate(rate: number): string {
+        // Backend sends the value directly, e.g. 1.2 → display as "1.2%"
+        return `${rate}%`;
     }
 
     getContractStatusKey(status: string): string {

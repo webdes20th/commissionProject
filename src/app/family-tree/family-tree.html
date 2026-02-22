@@ -148,6 +148,38 @@
       </div>
       }
 
+      <!-- Rate team value as percentage -->
+      <div class="ft-card__rate-row">
+        <span class="ft-card__rate-label">
+          <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="5" x2="5" y2="19" />
+            <circle cx="6.5" cy="6.5" r="2.5" />
+            <circle cx="17.5" cy="17.5" r="2.5" />
+          </svg>
+          อัตรา
+        </span>
+        <span class="ft-card__rate-badge" [class.ft-card__rate-badge--growth]="node.rateTeamValue > 1"
+          [class.ft-card__rate-badge--base]="node.rateTeamValue <= 1">
+          {{ formatRate(node.rateTeamValue) }}
+        </span>
+      </div>
+
+      <!-- Self commission -->
+      @if (node.selfCommission > 0) {
+      <div class="ft-card__self-commission">
+        <span class="ft-card__self-commission-label">
+          <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+          Self Commission
+        </span>
+        <span class="ft-card__self-commission-amount">{{ formatAmountFull(node.selfCommission) }}</span>
+      </div>
+      }
+
       <!-- Expand toggle -->
       @if (node.children.length > 0) {
       <button class="ft-card__toggle" [class.ft-card__toggle--open]="!node.collapsed" (click)="toggleNode(node)"
