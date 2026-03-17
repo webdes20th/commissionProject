@@ -35,6 +35,10 @@ export interface FamilyMember {
     summaryTeamValue: number;
     rateTeamValue: number;
     selfCommission: number;
+    selfOverRide: number;
+    GARate: number | null;
+    GAcommission: number | null;
+    diffRateCommission: number;
     children: FamilyMember[];
     // UI state
     collapsed?: boolean;
@@ -99,7 +103,7 @@ export class FamilyTreeComponent implements OnInit {
     fetchFamilyTree(): void {
         this.loading.set(true);
         this.error.set(null);
-        this.http.get<FamilyTreeResponse>('http://localhost:3001/users/team-cal/family-tree').subscribe({
+        this.http.get<FamilyTreeResponse>('http://localhost:3001/users/team-cal/family-tree?year=2026&month=2').subscribe({
             next: (res) => {
                 if (res.successful) {
                     this.totalMembers.set(res.data.totalMembers);
@@ -177,7 +181,8 @@ export class FamilyTreeComponent implements OnInit {
         return contracts.reduce((sum, c) => sum + c.amount, 0);
     }
 
-    formatAmount(amount: number): string {
+    formatAmount(amount: number | null | undefined): string {
+        if (amount == null) return '—';
         if (amount >= 1_000_000) {
             const m = amount / 1_000_000;
             return m % 1 === 0 ? `${m}ล้าน` : `${m.toFixed(2).replace(/\.?0+$/, '')}ล้าน`;
@@ -189,12 +194,14 @@ export class FamilyTreeComponent implements OnInit {
         return amount.toLocaleString('th-TH');
     }
 
-    formatAmountFull(amount: number): string {
+    formatAmountFull(amount: number | null | undefined): string {
+        if (amount == null) return '—';
         return '฿' + amount.toLocaleString('th-TH');
     }
 
-    formatRate(rate: number): string {
+    formatRate(rate: number | null | undefined): string {
         // Backend sends the value directly, e.g. 1.2 → display as "1.2%"
+        if (rate == null) return '—';
         return `${rate}%`;
     }
 
@@ -216,5 +223,50 @@ export class FamilyTreeComponent implements OnInit {
 
     trackByContract(_: number, c: Contract): string {
         return c.contractNumber;
+    }
+
+    // ── Drag to Scroll ──────────────────────────────────
+    private isDragging = false;
+    private startX = 0;
+    private startY = 0;
+    private scrollLeft = 0;
+    private scrollTop = 0;
+    private windowScrollTop = 0;
+
+    onMouseDown(event: MouseEvent, element: HTMLElement): void {
+        if (event.button !== 0) return; // Only allow left-click
+        this.isDragging = true;
+        element.style.cursor = 'grabbing';
+        element.style.userSelect = 'none';
+        this.startX = event.clientX;
+        this.startY = event.clientY;
+        this.scrollLeft = element.scrollLeft;
+        this.scrollTop = element.scrollTop;
+        this.windowScrollTop = window.scrollY || document.documentElement.scrollTop;
+    }
+
+    onMouseLeave(element: HTMLElement): void {
+        this.isDragging = false;
+        element.style.removeProperty('cursor');
+        element.style.removeProperty('user-select');
+    }
+
+    onMouseUp(element: HTMLElement): void {
+        this.isDragging = false;
+        element.style.removeProperty('cursor');
+        element.style.removeProperty('user-select');
+    }
+
+    onMouseMove(event: MouseEvent, element: HTMLElement): void {
+        if (!this.isDragging) return;
+        event.preventDefault();
+        const x = event.clientX;
+        const y = event.clientY;
+        const walkX = (x - this.startX) * 1; // Scroll-fast multiplier
+        const walkY = (y - this.startY) * 1;
+
+        element.scrollLeft = this.scrollLeft - walkX;
+        element.scrollTop = this.scrollTop - walkY;
+        window.scrollTo(window.scrollX, this.windowScrollTop - walkY);
     }
 }

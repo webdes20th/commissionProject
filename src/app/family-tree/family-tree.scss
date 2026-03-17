@@ -618,6 +618,135 @@ $line-w: 2px;
         font-family: 'SFMono-Regular', 'Consolas', monospace;
     }
 
+    // ── Self override ──
+    &__self-override {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 5px;
+        padding: 5px 9px;
+        background: #ecfdf5;
+        border: 1px solid #6ee7b7;
+        border-radius: 8px;
+    }
+
+    &__self-override-label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.62rem;
+        font-weight: 600;
+        color: #065f46;
+
+        svg {
+            stroke: #059669;
+            flex-shrink: 0;
+        }
+    }
+
+    &__self-override-amount {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #047857;
+        font-family: 'SFMono-Regular', 'Consolas', monospace;
+    }
+
+    // ── Diff Rate Commission ──
+    &__diff-rate {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 5px;
+        padding: 5px 9px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+    }
+
+    &__diff-rate-label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.62rem;
+        font-weight: 600;
+        color: #9a3412;
+
+        svg {
+            stroke: #ea580c;
+            flex-shrink: 0;
+        }
+    }
+
+    &__diff-rate-amount {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #c2410c;
+        font-family: 'SFMono-Regular', 'Consolas', monospace;
+
+        &--zero {
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+    }
+
+    // ── GA section (GA Type only) ──
+    &__ga-section {
+        margin-top: 6px;
+        padding: 6px 9px 7px;
+        background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
+        border: 1px solid #c4b5fd;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__ga-header {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        color: #7c3aed;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+
+        svg {
+            stroke: #7c3aed;
+            flex-shrink: 0;
+        }
+    }
+
+    &__ga-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__ga-label {
+        font-size: 0.62rem;
+        font-weight: 500;
+        color: #6d28d9;
+    }
+
+    &__ga-rate-badge {
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 1px 7px;
+        border-radius: 20px;
+        background: #ede9fe;
+        color: #5b21b6;
+        font-family: 'SFMono-Regular', 'Consolas', monospace;
+    }
+
+    &__ga-amount {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #5b21b6;
+        font-family: 'SFMono-Regular', 'Consolas', monospace;
+    }
+
     // ── Expand toggle ──
     &__toggle {
         display: flex;
